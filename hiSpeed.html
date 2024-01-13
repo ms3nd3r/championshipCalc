@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="jp">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ハイスピード計算</title>
+  <link rel="stylesheet" type="text/css" href="hiSpeed.css">
+  <link rel="stylesheet" type="text/css" href="app.css">
+</head>
+
+<body>
+  <h1>ハイスピード計算</h1>
+  <p>BPM: <input type="number" id="bpm" value="150" min="10" max="999" step="10"></p> 
+  <p>求めているハイスピード: <input type="number" id="target" value="450" min="10" max="999" step="10"></p>
+  <button id="calc">計算</button>
+  <div id="result">
+    BPM<span id="resultBpm">150</span> のとき、<span id="resultTarget">3.00</span>倍速にすることで<br>求めているハイスピードになります.
+    <h3>倍率換算表</h3>
+    <table border="1">
+      <tr id="speedRow">
+        <!-- Placeholder for speed values -->
+      </tr>
+      <tr id="resultRow">
+        <!-- Placeholder for result values -->
+      </tr>
+    </table>
+    <p>表示後左右にスクロールが可能です</p>
+  </div>
+  <script>
+    const calc = document.getElementById('calc');
+    const resultBpm = document.getElementById('resultBpm');
+    const resultTarget = document.getElementById('resultTarget');
+    const result = document.getElementById('result');
+    const speedRow = document.getElementById('speedRow');
+    const resultRow = document.getElementById('resultRow');
+
+    calc.addEventListener('click', () => {
+      const bpm = parseFloat(document.getElementById('bpm').value);
+      const target = parseFloat(document.getElementById('target').value);
+
+
+      if (isNaN(bpm) || isNaN(target)) {
+        alert('BPMと求めているハイスピードを入力してください');
+        return;
+      }
+
+      if (bpm < 10 || bpm > 999 || target < 10 || target > 999) {
+        alert('BPMと求めているハイスピードは10~999の間で入力してください');
+        return;
+      }
+    
+      resultBpm.textContent = bpm;
+      resultTarget.textContent = target;
+      result.style.display = 'block';
+
+      // Clear previous values
+      speedRow.innerHTML = "";
+      resultRow.innerHTML = "";
+
+      let bestSpeed = 1;
+      let minDifference = Math.abs(bpm * bestSpeed - target);
+
+      for (let i = 1.0; i <= 4.0; i += 0.25) {
+        const speed = i.toFixed(2);
+        const resultSpeed = Math.floor(bpm * i);
+        speedRow.innerHTML += `<td>x${speed}</td>`;
+        resultRow.innerHTML += `<td>${resultSpeed}</td>`;
+
+        const difference = Math.abs(resultSpeed - target);
+        if (difference < minDifference) {
+          minDifference = difference;
+          bestSpeed = i;
+        }
+      }
+
+      resultTarget.textContent = bestSpeed.toFixed(2);
+    });
+  </script>
+</body>
+
+</html>
